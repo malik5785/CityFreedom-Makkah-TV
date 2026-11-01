@@ -115,6 +115,16 @@ for name in ('body', 'ground', 'hill', 'hb', 'cloud', 'puff', 'node', 'pivot', '
 # Explicitly port Control sizing and positioning, not Spatial transforms.
 for name in ('b', 'ui_root', 'top', 'hud', 'district_label', 'time_label', 'weather_label', 'left', 'speed_label', 'minimap', 'full_map', 'box', 'bottom', 'note', 'sound_status', 'title', 'lab', 'wardrobe_info'):
     source=source.replace(name + '.size = Vector2(', name + '.rect_size = Vector2(')
+# Godot 3 String uses find() instead of contains().
+source=source.replace('.contains(', '.find(')
+source=source.replace('ks.find("#sky"):', 'ks.find("#sky") != -1:')
+source=source.replace('en.find("Great Mosque")', 'en.find("Great Mosque") != -1')
+source=source.replace('en.find("Grand Mosque")', 'en.find("Grand Mosque") != -1')
+# Godot 3 SpatialMaterial exposes triplanar through flags, not uv1_world_triplanar.
+source=source.replace('m.uv1_world_triplanar = true', 'm.flags_world_triplanar = true')
+source=source.replace('gmat.uv1_world_triplanar = true', 'gmat.flags_world_triplanar = true')
+# Godot 3 uses the same flags property for the triplanar enable.
+source=source.replace('.uv1_triplanar = true', '.flags_use_triplanar = true')
 # Remove typed declarations and return annotations; leave original functions and control flow.
 source=re.sub(r'(?m)^(\s*(?:var|const)\s+\w+)\s*:\s*[A-Za-z_][A-Za-z_0-9]*(?=\s*(?:=|$))',r'\1',source)
 source=re.sub(r'(?m)^(\s*func\s+\w+\([^\n]*?\))\s*->\s*[A-Za-z_][A-Za-z_0-9]*\s*:',r'\1:',source)
