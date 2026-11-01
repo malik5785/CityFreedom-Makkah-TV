@@ -29,6 +29,7 @@ source=source.replace('spots.sort_custom(func(x, y): return (x[0] as Vector2).di
 source=source.replace('list.sort_custom(func(x, y): return x[0] < y[0])', 'list.sort_custom(self, "_sort_district_distance")')
 source += '\\nfunc _sort_district_distance(x, y):\\n    return x[0] < y[0]\\n'
 source += '\\nfunc _sort_spots_by_distance(x, y):\\n    return x[0].distance_squared_to(start_pos) < y[0].distance_squared_to(start_pos)\\n'
+source=source.replace('best.sort_custom(func(a, b): return a[0] < b[0])', 'best.sort_custom(self, "_sort_district_distance")')
 # Remove typed declarations and return annotations; leave original functions and control flow.
 source=re.sub(r'(?m)^(\s*(?:var|const)\s+\w+)\s*:\s*[A-Za-z_][A-Za-z_0-9]*(?=\s*(?:=|$))',r'\1',source)
 source=re.sub(r'(?m)^(\s*func\s+\w+\([^\n]*?\))\s*->\s*[A-Za-z_][A-Za-z_0-9]*\s*:',r'\1:',source)
