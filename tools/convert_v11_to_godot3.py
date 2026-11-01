@@ -5,7 +5,7 @@ from pathlib import Path
 import re
 source=Path("original_v11_reference/main.gd").read_text(encoding="utf-8")
 replacements={
-"FastNoiseLite":"OpenSimplexNoise","NoiseTexture2D":"NoiseTexture","BoxMesh":"CubeMesh","BaseMaterial3D":"SpatialMaterial","CharacterBody3D":"KinematicBody","Node3D":"Spatial","Camera3D":"Camera",
+"GeometryInstance3D":"GeometryInstance","FastNoiseLite":"OpenSimplexNoise","NoiseTexture2D":"NoiseTexture","BoxMesh":"CubeMesh","BaseMaterial3D":"SpatialMaterial","CharacterBody3D":"KinematicBody","Node3D":"Spatial","Camera3D":"Camera",
 "DirectionalLight3D":"DirectionalLight","OmniLight3D":"OmniLight",
 "MeshInstance3D":"MeshInstance","StandardMaterial3D":"SpatialMaterial",
 "ProceduralSkyMaterial":"ProceduralSky","BoxShape3D":"BoxShape",
