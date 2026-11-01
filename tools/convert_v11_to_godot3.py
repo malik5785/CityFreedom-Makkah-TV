@@ -35,7 +35,10 @@ source=source.replace('Transform(Basis.looking_at(-sun_dir, Vector3.UP), Vector3
 source=source.replace('Transform(Basis.looking_at(-moon_dir, Vector3.UP), Vector3.ZERO)', 'Transform().looking_at(-moon_dir, Vector3.UP)')
 # Replace after all class and vector constants have been renamed.
 source=re.sub(r'Transform\\(Basis\\.looking_at\\((-?\\w+),\\s*Vector3\\(0,1,0\\)\\),\\s*Vector3\\(0,0,0\\)\\)', r'Transform().looking_at(\\1, Vector3(0,1,0))', source)
-assert 'Basis.looking_at' not in source, 'Unconverted Godot 4 Basis.looking_at call'
+# Godot 3 Transform.looking_at accepts target point and up vector.
+source=re.sub(r'Transform\\(Basis\\.looking_at\\(([^,]+),\\s*Vector3\\(0,1,0\\)\\),\\s*Vector3\\(0,0,0\\)\\)', r'Transform().looking_at(\\1, Vector3(0,1,0))', source)
+if 'Basis.looking_at' in source:
+    raise RuntimeError('Unconverted Basis.looking_at: ' + source[source.index('Basis.looking_at')-55:source.index('Basis.looking_at')+95])
 # Remove typed declarations and return annotations; leave original functions and control flow.
 source=re.sub(r'(?m)^(\s*(?:var|const)\s+\w+)\s*:\s*[A-Za-z_][A-Za-z_0-9]*(?=\s*(?:=|$))',r'\1',source)
 source=re.sub(r'(?m)^(\s*func\s+\w+\([^\n]*?\))\s*->\s*[A-Za-z_][A-Za-z_0-9]*\s*:',r'\1:',source)
