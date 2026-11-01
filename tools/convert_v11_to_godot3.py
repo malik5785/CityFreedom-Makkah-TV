@@ -53,6 +53,8 @@ source=source.replace('Transform(Basis.looking_at(-sun_dir, Vector3(0,1,0)), Vec
 source=source.replace('Transform(Basis.looking_at(-moon_dir, Vector3(0,1,0)), Vector3(0,0,0))', 'Transform().looking_at(-moon_dir, Vector3(0,1,0))')
 if 'Basis.looking_at' in source:
     raise RuntimeError('Unconverted Basis.looking_at: ' + source[source.index('Basis.looking_at')-55:source.index('Basis.looking_at')+95])
+# Godot 3 ProceduralSky IS the Sky resource; Godot 4's Sky wrapper cannot be instantiated.
+source=source.replace('var sky_res := Sky.new()\n\tsky_res.sky_material = sky_mat\n\tenv.sky = sky_res', 'env.sky = sky_mat')
 # Godot 3 OpenSimplexNoise has no noise_type or frequency; use period.
 source=source.replace('gn.noise_type = OpenSimplexNoise.TYPE_SIMPLEX_SMOOTH', '# OpenSimplexNoise is simplex by default')
 source=source.replace('gn.frequency = 0.02', 'gn.period = 50.0')
