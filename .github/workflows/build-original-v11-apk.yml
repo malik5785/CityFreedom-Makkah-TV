@@ -1,0 +1,95 @@
+name: Build original V11 Android TV APK (Godot 3.6 GLES2)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Convert full original V11 game
+        run: |
+          python3 tools/convert_v11_to_godot3.py
+          mkdir -p godot3/data godot3/audio godot3/tex build
+          cp data/city.json godot3/data/city.json
+          for f in city.wav step.wav birds.wav horn.wav engine.wav people.wav; do
+            curl -fL --retry 3 "https://raw.githubusercontent.com/malik5785/APK-Build/main/audio/$f" -o "godot3/audio/$f"
+          done
+          for f in plaster.png asphalt.png facade.png sidewalk.png sand.png facade_emit.png; do
+            curl -fL --retry 3 "https://raw.githubusercontent.com/malik5785/APK-Build/main/tex/$f" -o "godot3/tex/$f"
+          done
+      - name: Install Godot 3.6.3 and export templates
+        run: |
+          set -euo pipefail
+          BASE=https://github.com/godotengine/godot-builds/releases/download/3.6.3-stable
+          curl -fL --retry 3 "$BASE/Godot_v3.6.3-stable_linux_headless.64.zip" -o /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          install -m 755 /tmp/godot/Godot_v3.6.3-stable_linux_headless.64 /usr/local/bin/godot3
+          curl -fL --retry 3 "$BASE/Godot_v3.6.3-stable_export_templates.tpz" -o /tmp/templates.tpz
+          mkdir -p "$HOME/.local/share/godot/templates/3.6.3.stable"
+          unzip -q /tmp/templates.tpz -d /tmp/templates
+          cp -a /tmp/templates/templates/. "$HOME/.local/share/godot/templates/3.6.3.stable/"
+      - name: Configure Android GLES2 export
+        run: |
+          cat > godot3/export_presets.cfg <<'EOF'
+          [preset.0]
+
+          name="Android"
+          platform="Android"
+          runnable=true
+          custom_features=""
+          export_filter="all_resources"
+          include_filter="*.json"
+          exclude_filter=""
+          export_path="../build/CityFreedom-Makkah-V11-TV.apk"
+          script_export_mode=1
+          script_encryption_key=""
+
+          [preset.0.options]
+
+          custom_template/debug=""
+          custom_template/release=""
+          custom_template/use_custom_build=false
+          version/code=11
+          version/name="11.0"
+          package/unique_name="com.cityfreedom.makkahv11tv"
+          package/name="City Freedom Makkah V11 TV"
+          package/signed=true
+          keystore/debug=""
+          keystore/debug_user="androiddebugkey"
+          keystore/debug_password="android"
+          architectures/armeabi-v7a=true
+          architectures/arm64-v8a=true
+          screen/immersive_mode=true
+          screen/support_small=true
+          screen/support_normal=true
+          screen/support_large=true
+          screen/support_xlarge=true
+          graphics/32_bits_framebuffer=true
+          EOF
+          keytool -genkeypair -keystore "$HOME/debug.keystore" -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 3650 -dname "CN=Android Debug,O=Android,C=US" -noprompt
+          sed -i "s|keystore/debug=\"\"|keystore/debug=\"$HOME/debug.keystore\"|" godot3/export_presets.cfg
+      - name: Validate entire original V11 GDScript before export
+        run: |
+          set -o pipefail
+          godot3 --no-window --editor --path godot3 --quit 2>&1 | tee build/parse.log
+          if grep -Ei 'SCRIPT ERROR|Parse Error|Parser Error|ERROR:.*(parse|script)' build/parse.log; then exit 1; fi
+      - name: Export Android TV APK
+        run: |
+          godot3 --no-window --path godot3 --export-debug Android ../build/CityFreedom-Makkah-V11-TV.apk
+          test -s build/CityFreedom-Makkah-V11-TV.apk
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: CityFreedom-V11-Android-build-diagnostics
+          path: build/parse.log
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: CityFreedom-Makkah-V11-TV-APK
+          path: build/CityFreedom-Makkah-V11-TV.apk
+          if-no-files-found: error
