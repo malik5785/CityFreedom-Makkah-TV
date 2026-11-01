@@ -76,6 +76,14 @@ source=source.replace('v.velocity = forward * want\n\t\tv.velocity.y = -2.0\n\t\
 source=source.replace('car.velocity = Vector3(-sin(car_heading) * speed, -2.0, -cos(car_heading) * speed)\n\t\tcar.move_and_slide()', 'car.move_and_slide(Vector3(-sin(car_heading) * speed, -2.0, -cos(car_heading) * speed), Vector3(0,1,0))')
 source=source.replace('player.velocity = move * walk_speed\n\t\tplayer.velocity.y = -2.0\n\t\tplayer.move_and_slide()', 'player.move_and_slide(move * walk_speed + Vector3(0,-2,0), Vector3(0,1,0))')
 source=source.replace('v.get_real_velocity()', 'v.get_linear_velocity()')
+# Additional Godot 3 API fixes found by actual game startup.
+source=source.replace('m.flags_disable_fog = true', '# Godot 3 material fog disable unsupported; use environment fog')
+source=source.replace('.volume_db =', '.unit_db =')
+source=source.replace('.is_empty()', '.empty()')
+source=source.replace('.visibility_range_end_margin = 60.0', '# visibility range margin unsupported on Godot 3')
+source=source.replace('mi.visibility_range_end = vis', '# visibility range unsupported on Godot 3')
+source=source.replace('l.visibility_range_end = vis_end', '# visibility range unsupported on Godot 3')
+source=source.replace('ui_root.scale = Vector2.ONE * factor', 'ui_root.rect_scale = Vector2(1,1) * factor')
 # Godot 3 OpenSimplexNoise has no noise_type or frequency; use period.
 source=source.replace('gn.noise_type = OpenSimplexNoise.TYPE_SIMPLEX_SMOOTH', '# OpenSimplexNoise is simplex by default')
 source=source.replace('gn.frequency = 0.02', 'gn.period = 50.0')
