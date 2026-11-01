@@ -1,0 +1,35 @@
+name: Convert original V11 to Godot 3.6 GLES2
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate Godot 3.6 source from original V11
+        run: |
+          python3 tools/convert_v11_to_godot3.py
+          cp -r data godot3/data
+      - name: Install Godot 3.6.3 headless
+        run: |
+          set -e
+          curl -fL --retry 3 https://github.com/godotengine/godot-builds/releases/download/3.6.3-stable/Godot_v3.6.3-stable_linux_headless.64.zip -o /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          chmod +x /tmp/godot/Godot_v3.6.3-stable_linux_headless.64
+      - name: Parse converted project and fail on script errors
+        run: |
+          set -o pipefail
+          timeout 45s /tmp/godot/Godot_v3.6.3-stable_linux_headless.64 --path godot3 --editor --quit 2>&1 | tee godot3-parse.log
+          if grep -Ei 'SCRIPT ERROR|Parse Error|Parser Error|ERROR:.*(parse|script)' godot3-parse.log; then exit 1; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: V11-original-Godot3-conversion-diagnostics
+          path: |
+            godot3/
+            godot3-parse.log
