@@ -31,7 +31,7 @@ source=re.sub(r'\b([A-Za-z_]\w*)\s*:\s*(?:float|int|bool|String|Vector2|Vector3|
 source=re.sub(r'\bvar\s+(\w+)\s*:=',r'var \1 =',source)
 source=re.sub(r'\bconst\s+(\w+)\s*:=',r'const \1 =',source)
 source=source.replace('get_viewport().size_changed.connect(_resize_ui)','get_viewport().connect("size_changed", self, "_resize_ui")')
-source=source.replace('Time.get_ticks_msec()','OS.get_ticks_msec()')
+source=source.replace("Color.html(", "Color(")\nsource=source.replace('Time.get_ticks_msec()','OS.get_ticks_msec()')
 source=source.replace('Time.get_ticks_usec()','OS.get_ticks_usec()')
 source=source.replace('deg_to_rad(','deg2rad(').replace('rad_to_deg(','rad2deg(')
 source=source.replace('lerpf(','lerp(').replace('snappedf(','stepify(')
