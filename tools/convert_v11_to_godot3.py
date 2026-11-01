@@ -5,7 +5,7 @@ from pathlib import Path
 import re
 source=Path("original_v11_reference/main.gd").read_text(encoding="utf-8")
 replacements={
-"CharacterBody3D":"KinematicBody","Node3D":"Spatial","Camera3D":"Camera",
+"BaseMaterial3D":"SpatialMaterial","CharacterBody3D":"KinematicBody","Node3D":"Spatial","Camera3D":"Camera",
 "DirectionalLight3D":"DirectionalLight","OmniLight3D":"OmniLight",
 "MeshInstance3D":"MeshInstance","StandardMaterial3D":"SpatialMaterial",
 "ProceduralSkyMaterial":"ProceduralSky","BoxShape3D":"BoxShape",
@@ -21,6 +21,9 @@ replacements={
 "Vector3.UP":"Vector3(0,1,0)","Vector3.ZERO":"Vector3(0,0,0)",
 "Vector2.ZERO":"Vector2(0,0)","Mesh.PRIMITIVE_TRIANGLES":"Mesh.PRIMITIVE_TRIANGLES",
 "InputEventKey.keycode":"InputEventKey.scancode",
+"emission_energy_multiplier":"emission_energy",
+"clampf(":"clamp(","absf(":"abs(","mini(":"min(","maxi(":"max(",
+"randf_range(":"rand_range(","randi_range(":"randi_range(",
 }
 for old,new in replacements.items():
     source=source.replace(old,new)
