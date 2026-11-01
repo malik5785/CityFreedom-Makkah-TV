@@ -1,0 +1,33 @@
+name: Validate original V11 conversion
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  source-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify original source and report conversion blockers
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          source=Path('original_v11_reference/main.gd')
+          assert source.is_file(), 'Original V11 main.gd missing'
+          script=source.read_text()
+          checks={
+              'Godot 4 Node3D': 'Node3D',
+              'Godot 4 CharacterBody3D': 'CharacterBody3D',
+              'Godot 4 StandardMaterial3D': 'StandardMaterial3D',
+              'Godot 4 MeshInstance3D': 'MeshInstance3D',
+              'Godot 4 PackedVector3Array': 'PackedVector3Array',
+              'Godot 4 Transform3D': 'Transform3D',
+              'Godot 4 Vector2i': 'Vector2i',
+          }
+          for name, token in checks.items():
+              print(f'{name}: {script.count(token)} references')
+          assert Path('data/city.json').is_file(), 'Real map missing'
+          print('Original source audit completed. A Godot 3 port is not yet validated.')
+          PY
