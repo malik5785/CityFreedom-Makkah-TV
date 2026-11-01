@@ -64,7 +64,7 @@ source=source.replace('env.fog_density = 0.00045', 'env.fog_depth_enabled = true
 source=source.replace('env.fog_light_color =', 'env.fog_color =')
 source=source.replace('city_environment.fog_light_color =', 'city_environment.fog_color =')
 # Godot 3 NoiseTexture.color_ramp expects GradientTexture, not a raw Gradient.
-source=source.replace('gtex.color_ramp = gramp', 'var ramp_texture = GradientTexture.new()\n\tramp_texture.gradient = gramp\n\tgtex.color_ramp = ramp_texture')
+source=source.replace('gtex.color_ramp = gramp', '# Godot 3 NoiseTexture has no color_ramp; use base noise or sand texture')
 # Godot 3 OpenSimplexNoise has no noise_type or frequency; use period.
 source=source.replace('gn.noise_type = OpenSimplexNoise.TYPE_SIMPLEX_SMOOTH', '# OpenSimplexNoise is simplex by default')
 source=source.replace('gn.frequency = 0.02', 'gn.period = 50.0')
@@ -164,7 +164,7 @@ source=source.replace('draw_string(font,','draw_string(font,')
 Path("godot3").mkdir(exist_ok=True)
 # TV safe mode intentionally does not execute the unported full V11 startup.
 # Preserve converted source as build diagnostics outside exported game folder.
-Path("godot3/main.gd").write_text(Path("tools/safe_tv.gd").read_text(encoding="utf-8"),encoding="utf-8")
+Path("godot3/main.gd").write_text(source,encoding="utf-8")
 Path("godot3/main.tscn").write_text('[gd_scene load_steps=2 format=2]\n[ext_resource path="res://main.gd" type="Script" id=1]\n[node name="CityFreedomMakkah" type="Spatial"]\nscript = ExtResource( 1 )\n')
 Path("godot3/project.godot").write_text('config_version=4\n[application]\nconfig/name="City Freedom Makkah V11 TV"\nrun/main_scene="res://main.tscn"\n[rendering]\nquality/driver/driver_name="GLES2"\nvram_compression/import_etc=true\nvram_compression/import_etc2=false\n')
 print(f"Converted first-pass original V11: {len(source)} bytes")
