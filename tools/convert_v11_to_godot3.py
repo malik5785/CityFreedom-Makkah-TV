@@ -5,7 +5,7 @@ from pathlib import Path
 import re
 source=Path("original_v11_reference/main.gd").read_text(encoding="utf-8")
 replacements={
-"CapsuleShape3D":"CapsuleShape","ConvexPolygonShape3D":"ConvexPolygonShape","PackedVector2Array":"PoolVector2Array","Geometry2D":"Geometry","GeometryInstance3D":"GeometryInstance","FastNoiseLite":"OpenSimplexNoise","NoiseTexture2D":"NoiseTexture","BoxMesh":"CubeMesh","BaseMaterial3D":"SpatialMaterial","CharacterBody3D":"KinematicBody","Node3D":"Spatial","Camera3D":"Camera",
+"AudioStreamWAV":"AudioStreamSample","CapsuleShape3D":"CapsuleShape","ConvexPolygonShape3D":"ConvexPolygonShape","PackedVector2Array":"PoolVector2Array","Geometry2D":"Geometry","GeometryInstance3D":"GeometryInstance","FastNoiseLite":"OpenSimplexNoise","NoiseTexture2D":"NoiseTexture","BoxMesh":"CubeMesh","BaseMaterial3D":"SpatialMaterial","CharacterBody3D":"KinematicBody","Node3D":"Spatial","Camera3D":"Camera",
 "DirectionalLight3D":"DirectionalLight","OmniLight3D":"OmniLight",
 "MeshInstance3D":"MeshInstance","StandardMaterial3D":"SpatialMaterial",
 "ProceduralSkyMaterial":"ProceduralSky","BoxShape3D":"BoxShape",
@@ -51,6 +51,7 @@ source=source.replace('gn.frequency = 0.02', 'gn.period = 50.0')
 source=source.replace('gtex.seamless = true', '# seamless noise unsupported in Godot 3 NoiseTexture')
 source=source.replace('var txt := FileAccess.get_file_as_string("res://data/city.json")', 'var file = File.new()\n\tfile.open("res://data/city.json", File.READ)\n\tvar txt = file.get_as_text()\n\tfile.close()')
 source=source.replace('var parsed = JSON.parse_string(txt)', 'var parsed = JSON.parse(txt).result')
+source=source.replace('AudioStreamSample.LOOP_FORWARD', 'AudioStreamSample.LOOP_FORWARD')
 # Remove typed declarations and return annotations; leave original functions and control flow.
 source=re.sub(r'(?m)^(\s*(?:var|const)\s+\w+)\s*:\s*[A-Za-z_][A-Za-z_0-9]*(?=\s*(?:=|$))',r'\1',source)
 source=re.sub(r'(?m)^(\s*func\s+\w+\([^\n]*?\))\s*->\s*[A-Za-z_][A-Za-z_0-9]*\s*:',r'\1:',source)
