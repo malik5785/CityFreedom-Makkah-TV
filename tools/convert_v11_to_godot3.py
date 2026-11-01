@@ -103,6 +103,18 @@ if old_label not in source:
     raise RuntimeError("Original Label3D helper changed; update port explicitly")
 source = source.replace(old_label, new_label)
 source = source.replace('BaseMaterial3D.BILLBOARD_ENABLED', 'SpriteBase3D.BILLBOARD_ENABLED')
+# Godot 3 RandomNumberGenerator uses randf_range, unlike global rand_range.
+source=source.replace('rng.rand_range(', 'rng.randf_range(')
+# Godot 3 BoxShape uses half-extents, not the Godot 4 full size property.
+source=source.replace('bs.size = size', 'bs.extents = size * 0.5')
+source=source.replace('bs.size = Vector3(dd.length(), h - mh, 1.2)', 'bs.extents = Vector3(dd.length(), h - mh, 1.2) * 0.5')
+source=source.replace('bs.size = vsize', 'bs.extents = vsize * 0.5')
+# Spatial uses translation in Godot 3; UI Control still uses rect_position.
+for name in ('body', 'ground', 'hill', 'hb', 'cloud', 'puff', 'node', 'pivot', 'pv', 'v', 'azan_audio'):
+    source=source.replace(name + '.position =', name + '.translation =')
+# Explicitly port Control sizing and positioning, not Spatial transforms.
+for name in ('b', 'ui_root', 'top', 'hud', 'district_label', 'time_label', 'weather_label', 'left', 'speed_label', 'minimap', 'full_map', 'box', 'bottom', 'note', 'sound_status', 'title', 'lab', 'wardrobe_info'):
+    source=source.replace(name + '.size = Vector2(', name + '.rect_size = Vector2(')
 # Remove typed declarations and return annotations; leave original functions and control flow.
 source=re.sub(r'(?m)^(\s*(?:var|const)\s+\w+)\s*:\s*[A-Za-z_][A-Za-z_0-9]*(?=\s*(?:=|$))',r'\1',source)
 source=re.sub(r'(?m)^(\s*func\s+\w+\([^\n]*?\))\s*->\s*[A-Za-z_][A-Za-z_0-9]*\s*:',r'\1:',source)
