@@ -103,6 +103,12 @@ if old_label not in source:
     raise RuntimeError("Original Label3D helper changed; update port explicitly")
 source = source.replace(old_label, new_label)
 source = source.replace('BaseMaterial3D.BILLBOARD_ENABLED', 'SpriteBase3D.BILLBOARD_ENABLED')
+# Godot 3 SpatialMaterial calls this params_cull_mode.
+source=source.replace('.cull_mode = SpatialMaterial.CULL_DISABLED', '.params_cull_mode = SpatialMaterial.CULL_DISABLED')
+# Sprite3D billboard mode 1 = enabled; avoid nonexistent SpriteBase3D enum lookup.
+source=source.replace('SpriteBase3D.BILLBOARD_ENABLED', '1')
+# Godot 3 Geometry API uses convex_hull_2d.
+source=source.replace('Geometry.convex_hull(', 'Geometry.convex_hull_2d(')
 # Godot 3 RandomNumberGenerator uses randf_range, unlike global rand_range.
 source=source.replace('rng.rand_range(', 'rng.randf_range(')
 # Godot 3 BoxShape uses half-extents, not the Godot 4 full size property.
