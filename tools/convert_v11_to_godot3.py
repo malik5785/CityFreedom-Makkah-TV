@@ -55,6 +55,9 @@ if 'Basis.looking_at' in source:
     raise RuntimeError('Unconverted Basis.looking_at: ' + source[source.index('Basis.looking_at')-55:source.index('Basis.looking_at')+95])
 # Godot 3 ProceduralSky IS the Sky resource; Godot 4's Sky wrapper cannot be instantiated.
 source=source.replace('var sky_res := Sky.new()\n\tsky_res.sky_material = sky_mat\n\tenv.sky = sky_res', 'env.background_sky = sky_mat')
+# Godot 3 Environment has ambient_light_color but no ambient_light_source enum.
+# The explicit ambient_light_color assignment immediately below preserves the intended color.
+source=source.replace('env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR', '# Godot 3 uses ambient_light_color directly')
 # Godot 3 OpenSimplexNoise has no noise_type or frequency; use period.
 source=source.replace('gn.noise_type = OpenSimplexNoise.TYPE_SIMPLEX_SMOOTH', '# OpenSimplexNoise is simplex by default')
 source=source.replace('gn.frequency = 0.02', 'gn.period = 50.0')
