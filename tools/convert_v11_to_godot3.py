@@ -65,6 +65,17 @@ source=source.replace('env.fog_light_color =', 'env.fog_color =')
 source=source.replace('city_environment.fog_light_color =', 'city_environment.fog_color =')
 # Godot 3 NoiseTexture.color_ramp expects GradientTexture, not a raw Gradient.
 source=source.replace('gtex.color_ramp = gramp', '# Godot 3 NoiseTexture has no color_ramp; use base noise or sand texture')
+# Godot 3 SpatialMaterial uses flags_unshaded and flags_transparent.
+source=source.replace('cloud_mat.shading_mode = SpatialMaterial.SHADING_MODE_UNSHADED', 'cloud_mat.flags_unshaded = true')
+source=source.replace('m.shading_mode = SpatialMaterial.SHADING_MODE_UNSHADED', 'm.flags_unshaded = true')
+source=source.replace('cloud_mat.transparency = SpatialMaterial.TRANSPARENCY_ALPHA', 'cloud_mat.flags_transparent = true')
+source=source.replace('m.disable_fog = true', 'm.flags_disable_fog = true')
+# KinematicBody has no velocity property or parameterless move_and_slide.
+source=source.replace('npc.velocity = Vector3(v.x, -2.0, v.z)\n\t\t\t\tnpc.move_and_slide()', 'npc.move_and_slide(Vector3(v.x, -2.0, v.z), Vector3(0,1,0))')
+source=source.replace('v.velocity = forward * want\n\t\tv.velocity.y = -2.0\n\t\tv.move_and_slide()', 'v.move_and_slide(forward * want + Vector3(0,-2,0), Vector3(0,1,0))')
+source=source.replace('car.velocity = Vector3(-sin(car_heading) * speed, -2.0, -cos(car_heading) * speed)\n\t\tcar.move_and_slide()', 'car.move_and_slide(Vector3(-sin(car_heading) * speed, -2.0, -cos(car_heading) * speed), Vector3(0,1,0))')
+source=source.replace('player.velocity = move * walk_speed\n\t\tplayer.velocity.y = -2.0\n\t\tplayer.move_and_slide()', 'player.move_and_slide(move * walk_speed + Vector3(0,-2,0), Vector3(0,1,0))')
+source=source.replace('v.get_real_velocity()', 'v.get_linear_velocity()')
 # Godot 3 OpenSimplexNoise has no noise_type or frequency; use period.
 source=source.replace('gn.noise_type = OpenSimplexNoise.TYPE_SIMPLEX_SMOOTH', '# OpenSimplexNoise is simplex by default')
 source=source.replace('gn.frequency = 0.02', 'gn.period = 50.0')
