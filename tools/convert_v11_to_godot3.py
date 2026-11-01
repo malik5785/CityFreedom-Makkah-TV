@@ -24,6 +24,9 @@ replacements={
 }
 for old,new in replacements.items():
     source=source.replace(old,new)
+# Godot 3 does not support inline anonymous function expressions.
+source=source.replace('spots.sort_custom(func(x, y): return (x[0] as Vector2).distance_squared_to(start_pos) < (y[0] as Vector2).distance_squared_to(start_pos))', 'spots.sort_custom(self, "_sort_spots_by_distance")')
+source += '\\nfunc _sort_spots_by_distance(x, y):\\n    return x[0].distance_squared_to(start_pos) < y[0].distance_squared_to(start_pos)\\n'
 # Remove typed declarations and return annotations; leave original functions and control flow.
 source=re.sub(r'(?m)^(\s*(?:var|const)\s+\w+)\s*:\s*[A-Za-z_][A-Za-z_0-9]*(?=\s*(?:=|$))',r'\1',source)
 source=re.sub(r'(?m)^(\s*func\s+\w+\([^\n]*?\))\s*->\s*[A-Za-z_][A-Za-z_0-9]*\s*:',r'\1:',source)
