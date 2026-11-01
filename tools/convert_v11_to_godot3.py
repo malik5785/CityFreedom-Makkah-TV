@@ -37,6 +37,8 @@ source=source.replace('Transform(Basis.looking_at(-moon_dir, Vector3.UP), Vector
 source=re.sub(r'Transform\\(Basis\\.looking_at\\((-?\\w+),\\s*Vector3\\(0,1,0\\)\\),\\s*Vector3\\(0,0,0\\)\\)', r'Transform().looking_at(\\1, Vector3(0,1,0))', source)
 # Godot 3 Transform.looking_at accepts target point and up vector.
 source=re.sub(r'Transform\\(Basis\\.looking_at\\(([^,]+),\\s*Vector3\\(0,1,0\\)\\),\\s*Vector3\\(0,0,0\\)\\)', r'Transform().looking_at(\\1, Vector3(0,1,0))', source)
+source=source.replace('Transform(Basis.looking_at(-sun_dir, Vector3(0,1,0)), Vector3(0,0,0))', 'Transform().looking_at(-sun_dir, Vector3(0,1,0))')
+source=source.replace('Transform(Basis.looking_at(-moon_dir, Vector3(0,1,0)), Vector3(0,0,0))', 'Transform().looking_at(-moon_dir, Vector3(0,1,0))')
 if 'Basis.looking_at' in source:
     raise RuntimeError('Unconverted Basis.looking_at: ' + source[source.index('Basis.looking_at')-55:source.index('Basis.looking_at')+95])
 # Remove typed declarations and return annotations; leave original functions and control flow.
