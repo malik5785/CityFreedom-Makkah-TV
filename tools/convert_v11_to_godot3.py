@@ -5,7 +5,7 @@ from pathlib import Path
 import re
 source=Path("original_v11_reference/main.gd").read_text(encoding="utf-8")
 replacements={
-"BoxMesh":"CubeMesh","BaseMaterial3D":"SpatialMaterial","CharacterBody3D":"KinematicBody","Node3D":"Spatial","Camera3D":"Camera",
+"FastNoiseLite":"OpenSimplexNoise","NoiseTexture2D":"NoiseTexture","BoxMesh":"CubeMesh","BaseMaterial3D":"SpatialMaterial","CharacterBody3D":"KinematicBody","Node3D":"Spatial","Camera3D":"Camera",
 "DirectionalLight3D":"DirectionalLight","OmniLight3D":"OmniLight",
 "MeshInstance3D":"MeshInstance","StandardMaterial3D":"SpatialMaterial",
 "ProceduralSkyMaterial":"ProceduralSky","BoxShape3D":"BoxShape",
@@ -44,6 +44,11 @@ source=source.replace('Transform(Basis.looking_at(-sun_dir, Vector3(0,1,0)), Vec
 source=source.replace('Transform(Basis.looking_at(-moon_dir, Vector3(0,1,0)), Vector3(0,0,0))', 'Transform().looking_at(-moon_dir, Vector3(0,1,0))')
 if 'Basis.looking_at' in source:
     raise RuntimeError('Unconverted Basis.looking_at: ' + source[source.index('Basis.looking_at')-55:source.index('Basis.looking_at')+95])
+# Godot 3 OpenSimplexNoise has no noise_type or frequency; use period.
+source=source.replace('gn.noise_type = OpenSimplexNoise.TYPE_SIMPLEX_SMOOTH', '# OpenSimplexNoise is simplex by default')
+source=source.replace('gn.frequency = 0.02', 'gn.period = 50.0')
+# Godot 3 NoiseTexture uses as_normalmap and lacks seamless in some versions.
+source=source.replace('gtex.seamless = true', '# seamless noise unsupported in Godot 3 NoiseTexture')
 # Remove typed declarations and return annotations; leave original functions and control flow.
 source=re.sub(r'(?m)^(\s*(?:var|const)\s+\w+)\s*:\s*[A-Za-z_][A-Za-z_0-9]*(?=\s*(?:=|$))',r'\1',source)
 source=re.sub(r'(?m)^(\s*func\s+\w+\([^\n]*?\))\s*->\s*[A-Za-z_][A-Za-z_0-9]*\s*:',r'\1:',source)
