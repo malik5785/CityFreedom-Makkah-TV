@@ -22,7 +22,7 @@ replacements={
 "Vector2.ZERO":"Vector2(0,0)","Mesh.PRIMITIVE_TRIANGLES":"Mesh.PRIMITIVE_TRIANGLES",
 "InputEventKey.keycode":"InputEventKey.scancode",
 "emission_energy_multiplier":"emission_energy",
-"clampf(":"clamp(","absf(":"abs(","mini(":"min(","maxi(":"max(",
+"maxf(":"max(","minf(":"min(","clampf(":"clamp(","absf(":"abs(","mini(":"min(","maxi(":"max(",
 "randf_range(":"rand_range(","randi_range(":"randi_range(",
 }
 for old,new in replacements.items():
