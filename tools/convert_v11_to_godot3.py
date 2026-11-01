@@ -65,6 +65,44 @@ source=source.replace('AudioStreamSample.LOOP_FORWARD', 'AudioStreamSample.LOOP_
 source=source.replace('.lerp(', '.linear_interpolate(')
 # Godot 3 SurfaceTool sets per-vertex normals using add_normal.
 source=source.replace('.set_normal(', '.add_normal(')
+# Godot 3 has no Label3D. Render world labels with a Viewport-backed Sprite3D.
+old_label = '''func _label(parent: Node, text: String, pos: Vector3, px: float, col: Color, vis_end: float, rot_y: float = 0.0) -> Label3D:
+\tvar l := Label3D.new()
+\tl.text = text
+\tl.font_size = 48
+\tl.pixel_size = px
+\tl.modulate = col
+\tl.outline_size = 6
+\tl.position = pos
+\tl.rotation.y = rot_y
+\tl.visibility_range_end = vis_end
+\tparent.add_child(l)
+\treturn l'''
+new_label = '''func _label(parent, text, pos, px, col, vis_end, rot_y = 0.0):
+\tvar vp = Viewport.new()
+\tvp.size = Vector2(1024, 128)
+\tvp.transparent_bg = true
+\tvp.render_target_update_mode = Viewport.UPDATE_ONCE
+\tparent.add_child(vp)
+\tvar ui = Label.new()
+\tui.text = text
+\tui.rect_size = Vector2(1024, 128)
+\tui.align = Label.ALIGN_CENTER
+\tui.valign = Label.VALIGN_CENTER
+\tui.add_color_override("font_color", col)
+\tvp.add_child(ui)
+\tvar sprite = Sprite3D.new()
+\tsprite.texture = vp.get_texture()
+\tsprite.pixel_size = px
+\tsprite.billboard = SpriteBase3D.BILLBOARD_ENABLED
+\tsprite.translation = pos
+\tsprite.rotation.y = rot_y
+\tparent.add_child(sprite)
+\treturn sprite'''
+if old_label not in source:
+    raise RuntimeError("Original Label3D helper changed; update port explicitly")
+source = source.replace(old_label, new_label)
+source = source.replace('BaseMaterial3D.BILLBOARD_ENABLED', 'SpriteBase3D.BILLBOARD_ENABLED')
 # Remove typed declarations and return annotations; leave original functions and control flow.
 source=re.sub(r'(?m)^(\s*(?:var|const)\s+\w+)\s*:\s*[A-Za-z_][A-Za-z_0-9]*(?=\s*(?:=|$))',r'\1',source)
 source=re.sub(r'(?m)^(\s*func\s+\w+\([^\n]*?\))\s*->\s*[A-Za-z_][A-Za-z_0-9]*\s*:',r'\1:',source)
