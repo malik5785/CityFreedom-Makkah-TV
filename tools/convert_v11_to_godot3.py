@@ -124,7 +124,7 @@ source=source.replace('en.find("Grand Mosque")', 'en.find("Grand Mosque") != -1'
 source=source.replace('m.uv1_world_triplanar = true', 'm.flags_world_triplanar = true')
 source=source.replace('gmat.uv1_world_triplanar = true', 'gmat.flags_world_triplanar = true')
 # Godot 3 uses the same flags property for the triplanar enable.
-source=source.replace('.uv1_triplanar = true', '.flags_use_triplanar = true')
+# Godot 3 retains uv1_triplanar; only world-space flag needs remapping.
 # Remove typed declarations and return annotations; leave original functions and control flow.
 source=re.sub(r'(?m)^(\s*(?:var|const)\s+\w+)\s*:\s*[A-Za-z_][A-Za-z_0-9]*(?=\s*(?:=|$))',r'\1',source)
 source=re.sub(r'(?m)^(\s*func\s+\w+\([^\n]*?\))\s*->\s*[A-Za-z_][A-Za-z_0-9]*\s*:',r'\1:',source)
