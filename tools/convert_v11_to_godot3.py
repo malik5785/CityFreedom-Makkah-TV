@@ -33,6 +33,9 @@ source=source.replace('best.sort_custom(func(a, b): return a[0] < b[0])', 'best.
 # Godot 3 Basis has no static looking_at constructor; use Transform.looking_at.
 source=source.replace('Transform(Basis.looking_at(-sun_dir, Vector3.UP), Vector3.ZERO)', 'Transform().looking_at(-sun_dir, Vector3.UP)')
 source=source.replace('Transform(Basis.looking_at(-moon_dir, Vector3.UP), Vector3.ZERO)', 'Transform().looking_at(-moon_dir, Vector3.UP)')
+# Replace after all class and vector constants have been renamed.
+source=re.sub(r'Transform\\(Basis\\.looking_at\\((-?\\w+),\\s*Vector3\\(0,1,0\\)\\),\\s*Vector3\\(0,0,0\\)\\)', r'Transform().looking_at(\\1, Vector3(0,1,0))', source)
+assert 'Basis.looking_at' not in source, 'Unconverted Godot 4 Basis.looking_at call'
 # Remove typed declarations and return annotations; leave original functions and control flow.
 source=re.sub(r'(?m)^(\s*(?:var|const)\s+\w+)\s*:\s*[A-Za-z_][A-Za-z_0-9]*(?=\s*(?:=|$))',r'\1',source)
 source=re.sub(r'(?m)^(\s*func\s+\w+\([^\n]*?\))\s*->\s*[A-Za-z_][A-Za-z_0-9]*\s*:',r'\1:',source)
