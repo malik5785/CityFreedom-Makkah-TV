@@ -61,8 +61,10 @@ source=source.replace('gtex.seamless = true', '# seamless noise unsupported in G
 source=source.replace('var txt := FileAccess.get_file_as_string("res://data/city.json")', 'var file = File.new()\n\tfile.open("res://data/city.json", File.READ)\n\tvar txt = file.get_as_text()\n\tfile.close()')
 source=source.replace('var parsed = JSON.parse_string(txt)', 'var parsed = JSON.parse(txt).result')
 source=source.replace('AudioStreamSample.LOOP_FORWARD', 'AudioStreamSample.LOOP_FORWARD')
-# Godot 3 Color interpolation is linear_interpolate; Vector2.lerp remains valid.
-source=source.replace('.lerp(Color(', '.linear_interpolate(Color(')
+# Godot 3 Vector2, Vector3 and Color all use linear_interpolate, not lerp.
+source=source.replace('.lerp(', '.linear_interpolate(')
+# Godot 3 SurfaceTool sets per-vertex normals using add_normal.
+source=source.replace('.set_normal(', '.add_normal(')
 # Remove typed declarations and return annotations; leave original functions and control flow.
 source=re.sub(r'(?m)^(\s*(?:var|const)\s+\w+)\s*:\s*[A-Za-z_][A-Za-z_0-9]*(?=\s*(?:=|$))',r'\1',source)
 source=re.sub(r'(?m)^(\s*func\s+\w+\([^\n]*?\))\s*->\s*[A-Za-z_][A-Za-z_0-9]*\s*:',r'\1:',source)
