@@ -5,6 +5,13 @@ from pathlib import Path
 import re
 source=Path("original_v11_reference/main.gd").read_text(encoding="utf-8")
 replacements={
+"JOY_BUTTON_A":"JOY_XBOX_A","JOY_BUTTON_B":"JOY_XBOX_B","JOY_BUTTON_X":"JOY_XBOX_X","JOY_BUTTON_Y":"JOY_XBOX_Y",
+"JOY_BUTTON_BACK":"JOY_SELECT","JOY_BUTTON_START":"JOY_START",
+"JOY_BUTTON_DPAD_UP":"JOY_DPAD_UP","JOY_BUTTON_DPAD_DOWN":"JOY_DPAD_DOWN",
+"JOY_BUTTON_DPAD_LEFT":"JOY_DPAD_LEFT","JOY_BUTTON_DPAD_RIGHT":"JOY_DPAD_RIGHT",
+"JOY_AXIS_LEFT_X":"JOY_ANALOG_LX","JOY_AXIS_LEFT_Y":"JOY_ANALOG_LY",
+"JOY_AXIS_RIGHT_X":"JOY_ANALOG_RX","JOY_AXIS_RIGHT_Y":"JOY_ANALOG_RY",
+"JOY_AXIS_TRIGGER_RIGHT":"JOY_ANALOG_R2","JOY_AXIS_TRIGGER_LEFT":"JOY_ANALOG_L2",
 "HORIZONTAL_ALIGNMENT_CENTER":"Label.ALIGN_CENTER","VERTICAL_ALIGNMENT_CENTER":"Label.VALIGN_CENTER","SpotLight3D":"SpotLight","AudioStreamWAV":"AudioStreamSample","CapsuleShape3D":"CapsuleShape","ConvexPolygonShape3D":"ConvexPolygonShape","PackedVector2Array":"PoolVector2Array","Geometry2D":"Geometry","GeometryInstance3D":"GeometryInstance","FastNoiseLite":"OpenSimplexNoise","NoiseTexture2D":"NoiseTexture","BoxMesh":"CubeMesh","BaseMaterial3D":"SpatialMaterial","CharacterBody3D":"KinematicBody","Node3D":"Spatial","Camera3D":"Camera",
 "DirectionalLight3D":"DirectionalLight","OmniLight3D":"OmniLight",
 "MeshInstance3D":"MeshInstance","StandardMaterial3D":"SpatialMaterial",
