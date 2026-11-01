@@ -63,7 +63,6 @@ source=source.replace('var parsed = JSON.parse_string(txt)', 'var parsed = JSON.
 source=source.replace('AudioStreamSample.LOOP_FORWARD', 'AudioStreamSample.LOOP_FORWARD')
 # Godot 3 Color interpolation is linear_interpolate; Vector2.lerp remains valid.
 source=source.replace('.lerp(Color(', '.linear_interpolate(Color(')
-source=re.sub(r'(Color\\([^\\n]*?\\))\\.lerp\\(', r'\\1.linear_interpolate(', source)
 # Remove typed declarations and return annotations; leave original functions and control flow.
 source=re.sub(r'(?m)^(\s*(?:var|const)\s+\w+)\s*:\s*[A-Za-z_][A-Za-z_0-9]*(?=\s*(?:=|$))',r'\1',source)
 source=re.sub(r'(?m)^(\s*func\s+\w+\([^\n]*?\))\s*->\s*[A-Za-z_][A-Za-z_0-9]*\s*:',r'\1:',source)
