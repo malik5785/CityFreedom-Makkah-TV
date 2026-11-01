@@ -32,8 +32,10 @@ replacements={
 "maxf(":"max(","minf(":"min(","clampf(":"clamp(","absf(":"abs(","mini(":"min(","maxi(":"max(",
 "randf_range(":"rand_range(","randi_range(":"randi_range(",
 }
-for old,new in replacements.items():
+for old,new in sorted(replacements.items(), key=lambda item: len(item[0]), reverse=True):
     source=source.replace(old,new)
+# Avoid substring replacement collisions (JOY_BUTTON_A inside JOY_BUTTON_BACK).
+# Apply longest tokens first so complete button names are converted atomically.
 # Godot 3 does not support inline anonymous function expressions.
 source=source.replace('spots.sort_custom(func(x, y): return (x[0] as Vector2).distance_squared_to(start_pos) < (y[0] as Vector2).distance_squared_to(start_pos))', 'spots.sort_custom(self, "_sort_spots_by_distance")')
 source=source.replace('list.sort_custom(func(x, y): return x[0] < y[0])', 'list.sort_custom(self, "_sort_district_distance")')
