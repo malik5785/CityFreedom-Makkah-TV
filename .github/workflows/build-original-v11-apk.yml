@@ -78,6 +78,20 @@ jobs:
           set -o pipefail
           godot3 --no-window --editor --path godot3 --quit 2>&1 | tee build/parse.log
           if grep -Ei 'SCRIPT ERROR|Parse Error|Parser Error|ERROR:.*(parse|script)' build/parse.log; then exit 1; fi
+      - name: Smoke test full game startup for runtime errors
+        run: |
+          set +e
+          timeout 35s godot3 --no-window --path godot3 --quit-after 300 2>&1 | tee build/runtime.log
+          result=${PIPESTATUS[0]}
+          set -e
+          if grep -Ei 'SCRIPT ERROR|Invalid set index|Invalid get index|Invalid call|Nonexistent function|Attempt to call function|Parse Error' build/runtime.log; then
+            echo "Godot runtime errors detected during smoke test"
+            exit 1
+          fi
+          if [ "$result" -ne 0 ] && [ "$result" -ne 124 ]; then
+            echo "Godot runtime process failed: $result"
+            exit 1
+          fi
       - name: Configure Android SDK and export signing paths
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME"
@@ -105,6 +119,7 @@ jobs:
           name: CityFreedom-V11-Android-build-diagnostics
           path: |
             build/parse.log
+            build/runtime.log
             build/export.log
       - uses: actions/upload-artifact@v4
         if: success()
