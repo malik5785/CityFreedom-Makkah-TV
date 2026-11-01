@@ -49,7 +49,7 @@ source=source.replace('gn.noise_type = OpenSimplexNoise.TYPE_SIMPLEX_SMOOTH', '#
 source=source.replace('gn.frequency = 0.02', 'gn.period = 50.0')
 # Godot 3 NoiseTexture uses as_normalmap and lacks seamless in some versions.
 source=source.replace('gtex.seamless = true', '# seamless noise unsupported in Godot 3 NoiseTexture')
-source=source.replace('var txt := FileAccess.get_file_as_string("res://data/city.json")', 'var file = File.new()\\n\\tfile.open("res://data/city.json", File.READ)\\n\\tvar txt = file.get_as_text()\\n\\tfile.close()')
+source=source.replace('var txt := FileAccess.get_file_as_string("res://data/city.json")', 'var file = File.new()\n\tfile.open("res://data/city.json", File.READ)\n\tvar txt = file.get_as_text()\n\tfile.close()')
 source=source.replace('var parsed = JSON.parse_string(txt)', 'var parsed = JSON.parse(txt).result')
 # Remove typed declarations and return annotations; leave original functions and control flow.
 source=re.sub(r'(?m)^(\s*(?:var|const)\s+\w+)\s*:\s*[A-Za-z_][A-Za-z_0-9]*(?=\s*(?:=|$))',r'\1',source)
