@@ -58,6 +58,13 @@ source=source.replace('var sky_res := Sky.new()\n\tsky_res.sky_material = sky_ma
 # Godot 3 Environment has ambient_light_color but no ambient_light_source enum.
 # The explicit ambient_light_color assignment immediately below preserves the intended color.
 source=source.replace('env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR', '# Godot 3 uses ambient_light_color directly')
+# Godot 4 volumetric fog density has no Godot 3 Environment equivalent.
+# Use Godot 3 distance fog, with distant fade appropriate for the large city.
+source=source.replace('env.fog_density = 0.00045', 'env.fog_depth_enabled = true\n\tenv.fog_depth_begin = 250.0\n\tenv.fog_depth_end = 3800.0')
+source=source.replace('env.fog_light_color =', 'env.fog_color =')
+source=source.replace('city_environment.fog_light_color =', 'city_environment.fog_color =')
+# Godot 3 NoiseTexture.color_ramp expects GradientTexture, not a raw Gradient.
+source=source.replace('gtex.color_ramp = gramp', 'var ramp_texture = GradientTexture.new()\n\tramp_texture.gradient = gramp\n\tgtex.color_ramp = ramp_texture')
 # Godot 3 OpenSimplexNoise has no noise_type or frequency; use period.
 source=source.replace('gn.noise_type = OpenSimplexNoise.TYPE_SIMPLEX_SMOOTH', '# OpenSimplexNoise is simplex by default')
 source=source.replace('gn.frequency = 0.02', 'gn.period = 50.0')
